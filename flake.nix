@@ -40,6 +40,7 @@
                             enableHardeningWorkaround = true;
                         };
                         packages = with pkgs; [
+                            air
                             gopls
                             delve
                             gomod2nix.packages.${system}.default

@@ -1,28 +1,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"net/http"
+	"os"
+
+	"github.com/nohlachilders/atlas/internal/server"
 )
 
 func main() {
+	ctx := context.Background()
+
 	fmt.Println("serving...")
-	run()
-}
-
-func run() {
-	mux := http.ServeMux{}
-	server := http.Server{
-		Addr:    ":8080",
-		Handler: &mux,
+	if err := server.Run(ctx, []string{}, os.Getenv); err != nil {
+		fmt.Fprintf(os.Stderr, "error in serving: %v\n", err)
+		os.Exit(1)
 	}
-	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello world"))
-	})
-	log.Fatal(server.ListenAndServe())
-}
-
-type Config struct {
-	Port string
 }
