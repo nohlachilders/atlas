@@ -19,7 +19,9 @@ func respondWithError(w http.ResponseWriter, code int, msg string) {
 	type errorStruct struct {
 		Error string `json:"error"`
 	}
-	thisError := errorStruct{Error: msg}
+	thisError := errorStruct{
+		Error: msg,
+	}
 	res, _ := json.Marshal(thisError)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
