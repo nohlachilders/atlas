@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+
+	_ "github.com/lib/pq"
 )
 
 func Run(

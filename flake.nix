@@ -39,7 +39,16 @@
                             enable = true;
                             enableHardeningWorkaround = true;
                         };
+
+                        services.postgres = {
+                            listen_addresses = "127.0.0.1";
+                            enable = true;
+                            createDatabase = false;
+                        };
+
                         packages = with pkgs; [
+                            goose
+                            sqlc
                             air
                             gopls
                             delve

@@ -1,3 +1,4 @@
 tmp/
 .devenv/
 .direnv/
+.env
