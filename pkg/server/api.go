@@ -6,12 +6,14 @@ import (
 )
 
 func (cfg *Config) makeRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /healthz", healthResponseHandlerFunc)
+	mux.HandleFunc("GET /healthz", healthReponseHandlerFunc)
 
-	mux.Handle("POST /users", NewCreateUserHandler(cfg))
+	mux.Handle("POST /users", CreateUserHandler{
+		cfg: cfg,
+	})
 }
 
-func healthResponseHandlerFunc(w http.ResponseWriter, r *http.Request) {
+func healthReponseHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("OK"))

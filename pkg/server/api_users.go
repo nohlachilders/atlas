@@ -12,12 +12,6 @@ type CreateUserHandler struct {
 	cfg *Config
 }
 
-func NewCreateUserHandler(cfg *Config) CreateUserHandler {
-	return CreateUserHandler{
-		cfg: cfg,
-	}
-}
-
 func (h CreateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	type RequestFormat struct {
 		Email    string `json:"email"`

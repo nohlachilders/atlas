@@ -11,19 +11,24 @@ import (
 )
 
 func testingStartDefault(t *testing.T, ctx context.Context) {
+	env := testingEnv{
+		"ATLAS_PORT":   ":8080",
+		"ATLAS_DB_URL": "postgresql://localhost:5432/atlas?sslmode=disable",
+	}
+
 	ctx, cancel := context.WithCancel(ctx)
 	t.Cleanup(cancel)
-	baseURL := "http://localhost" + defaultTestingGetenv("ATLAS_PORT")
+	baseURL := "http://localhost" + env.getEnv("ATLAS_PORT")
 
-	go Run(ctx, defaultTestingGetenv)
+	go Run(ctx, env.getEnv)
 	time.Sleep(10 * time.Millisecond)
 
-	if err := awaitServerStartup(ctx, baseURL+"/healthz", 5*time.Second); err != nil {
+	if err := testingAwaitServerStartup(ctx, baseURL+"/healthz", 5*time.Second); err != nil {
 		t.Errorf("error in awaiting server startup: %v", err)
 	}
 }
 
-func awaitServerStartup(ctx context.Context, endpoint string, timeout time.Duration) error {
+func testingAwaitServerStartup(ctx context.Context, endpoint string, timeout time.Duration) error {
 	client := http.Client{}
 	startTime := time.Now()
 	for {
@@ -56,13 +61,10 @@ func awaitServerStartup(ctx context.Context, endpoint string, timeout time.Durat
 	}
 }
 
-func defaultTestingGetenv(s string) string {
-	envs := map[string]string{
-		"ATLAS_PORT":     ":8080",
-		"ATLAS_DB_URL":   "postgresql://localhost:5432/atlas?sslmode=disable",
-		"ATLAS_PLATFORM": "dev",
-	}
-	if value, ok := envs[s]; ok {
+type testingEnv map[string]string
+
+func (env testingEnv) getEnv(s string) string {
+	if value, ok := env[s]; ok {
 		return value
 	}
 	return ""
