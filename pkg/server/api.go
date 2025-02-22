@@ -5,11 +5,13 @@ import (
 	"net/http"
 )
 
-func makeRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /healthz", healthResponseHandler)
+func (cfg *Config) makeRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("GET /healthz", healthResponseHandlerFunc)
+
+	mux.Handle("POST /users", NewCreateUserHandler(cfg))
 }
 
-func healthResponseHandler(w http.ResponseWriter, r *http.Request) {
+func healthResponseHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte("OK"))
