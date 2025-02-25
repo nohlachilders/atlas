@@ -6,12 +6,6 @@ type ResetHandler struct {
 	cfg *Config
 }
 
-func NewResetHandler(cfg *Config) ResetHandler {
-	return ResetHandler{
-		cfg: cfg,
-	}
-}
-
 func (h ResetHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if h.cfg.Platform != "dev" {
 		respondWithError(w, http.StatusUnauthorized, "not allowed")

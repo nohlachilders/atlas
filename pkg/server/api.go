@@ -11,6 +11,9 @@ func (cfg *Config) makeRoutes(mux *http.ServeMux) {
 	mux.Handle("POST /users", CreateUserHandler{
 		cfg: cfg,
 	})
+	mux.Handle("POST /reset", ResetHandler{
+		cfg: cfg,
+	})
 }
 
 func healthReponseHandlerFunc(w http.ResponseWriter, r *http.Request) {

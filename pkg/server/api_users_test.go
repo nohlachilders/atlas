@@ -7,5 +7,22 @@ import (
 
 func TestUserCreation(t *testing.T) {
 	ctx := context.Background()
-	testingStartDefault(t, ctx)
+	baseURL, ctx := testingStartDefault(t, ctx)
+	status, _, err := testingSendRequestWithJSON(ctx, baseURL+"/reset", "POST", "")
+	if status != "200 OK" {
+		t.Errorf("something went wrong with the reset endpoint: wrong status %s", status)
+	}
+	if err != nil {
+		t.Errorf("unexpected error: %s", err)
+	}
+
+	status, _, err = testingSendRequestWithJSON(ctx, baseURL+"/users", "POST", map[string]string{"email": "test@email.com", "password": "test"})
+	if status != "201 Created" {
+		t.Errorf("something went wrong with the user creation endpoint: wrong status %s", status)
+	}
+	if err != nil {
+		t.Errorf("unexpected error: %s", err)
+	}
+
+	testingSendRequestWithJSON(ctx, baseURL+"/reset", "POST", "")
 }
