@@ -35,6 +35,9 @@
                 modules = [
                     ({pkgs, config, ... }: {
                         # stuff goes here
+                        env.GOOSE_DBSTRING = "postgres://nohlachilders@localhost:5432/atlas";
+                        env.GOOSE_DRIVER = "postgres";
+
                         languages.go = {
                             enable = true;
                             enableHardeningWorkaround = true;
@@ -44,6 +47,9 @@
                             listen_addresses = "127.0.0.1";
                             enable = true;
                             createDatabase = false;
+                            initialDatabases = [
+                                { name = "atlas"; }
+                            ];
                         };
 
                         packages = with pkgs; [
