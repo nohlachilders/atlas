@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -45,8 +46,9 @@ func Run(
 
 	handler := ChainMiddlewares(mux, []AddMiddlewareFunc{})
 	server := http.Server{
-		Addr:    cfg.Port,
-		Handler: handler,
+		Addr:        cfg.Port,
+		Handler:     handler,
+		BaseContext: func(l net.Listener) context.Context { return ctx },
 	}
 
 	fmt.Println("Now serving...")
