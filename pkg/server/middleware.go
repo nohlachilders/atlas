@@ -29,7 +29,7 @@ type LoggingMiddleware struct {
 func (handler *LoggingMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	defer func() {
-		fmt.Printf("Request received: %v, Took: %v\n", start, time.Since(start))
+		fmt.Printf("Request received at %v: %v, Took: %v\n", r.URL, start, time.Since(start))
 	}()
 
 	handler.next.ServeHTTP(w, r)

@@ -9,7 +9,7 @@ func TestUserCreation(t *testing.T) {
 	ctx := context.Background()
 	baseURL, ctx := testingStartDefault(t, ctx)
 	status, _, err := testingSendRequestWithJSON(ctx, baseURL+"/reset", "POST", "")
-	if status != "200 OK" {
+	if status != "204 No Content" {
 		t.Errorf("something went wrong with the reset endpoint: wrong status %s", status)
 	}
 	if err != nil {

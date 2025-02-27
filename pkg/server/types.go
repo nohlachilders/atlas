@@ -13,4 +13,6 @@ type User struct {
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 	IsAdmin        bool      `json:"-"`
+	Token          string    `json:"token,omitempty"`
+	RefreshToken   string    `json:"refresh_token,omitempty"`
 }

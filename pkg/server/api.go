@@ -7,13 +7,16 @@ import (
 
 func (cfg *Config) makeRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /healthz", healthReponseHandlerFunc)
+	mux.Handle("POST /reset", ChainMiddlewares(
+		ResetHandler{cfg: cfg},
+		[]AddMiddlewareFunc{
+			AddLoggingMiddleware,
+		}))
 
-	mux.Handle("POST /users", CreateUserHandler{
-		cfg: cfg,
-	})
-	mux.Handle("POST /reset", ResetHandler{
-		cfg: cfg,
-	})
+	mux.Handle("POST /users", CreateUserHandler{cfg: cfg})
+	mux.Handle("POST /login", LoginHandler{cfg: cfg})
+	mux.Handle("POST /refresh", RefreshHandler{cfg: cfg})
+	mux.Handle("POST /revoke", RevokeHandler{cfg: cfg})
 }
 
 func healthReponseHandlerFunc(w http.ResponseWriter, r *http.Request) {

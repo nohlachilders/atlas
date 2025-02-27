@@ -29,12 +29,17 @@ func (h CreateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, "something went wrong")
 		return
 	}
+	err = auth.CheckPasswordHash(data.Password, hashed)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		return
+	}
 
 	params := database.CreateUserParams{
 		Email:          data.Email,
 		HashedPassword: hashed,
 	}
-	dbUser, err := h.cfg.Database.CreateUser(*h.cfg.Context, params)
+	dbUser, err := h.cfg.Database.CreateUser(r.Context(), params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "something went wrong")
 		return

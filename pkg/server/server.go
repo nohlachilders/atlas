@@ -39,11 +39,13 @@ func Run(
 
 	cfg.Platform = getenv("ATLAS_PLATFORM")
 
-	mux := http.ServeMux{}
-	cfg.makeRoutes(&mux)
+	mux := http.NewServeMux()
+	cfg.makeRoutes(mux)
+
+	handler := ChainMiddlewares(mux, []AddMiddlewareFunc{})
 	server := http.Server{
 		Addr:    cfg.Port,
-		Handler: &mux,
+		Handler: handler,
 	}
 
 	fmt.Println("Now serving...")
@@ -65,4 +67,5 @@ type Config struct {
 	Platform string
 	Database *database.Queries
 	Context  *context.Context
+	Secret   string
 }
