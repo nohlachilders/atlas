@@ -15,6 +15,7 @@ import (
 
 func Run(
 	ctx context.Context,
+
 	// we abstract the way we source environment variables to enable
 	// in-code testing of the whole server process
 	getenv func(string) string,

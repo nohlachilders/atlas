@@ -16,13 +16,14 @@ func TestUserCreation(t *testing.T) {
 		t.Errorf("unexpected error: %s", err)
 	}
 
-	status, _, err = testingSendRequestWithJSON(ctx, baseURL+"/users", "POST", map[string]string{"email": "test@email.com", "password": "test"})
+	status, body, err := testingSendRequestWithJSON(ctx, baseURL+"/users", "POST", map[string]string{"email": "test@email.com", "password": "test"})
 	if status != "201 Created" {
 		t.Errorf("something went wrong with the user creation endpoint: wrong status %s", status)
 	}
 	if err != nil {
 		t.Errorf("unexpected error: %s", err)
 	}
+	t.Logf("body: %s", string(body))
 
 	testingSendRequestWithJSON(ctx, baseURL+"/reset", "POST", "")
 }

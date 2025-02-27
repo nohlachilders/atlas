@@ -11,7 +11,8 @@ import (
 func main() {
 	ctx := context.Background()
 
-	if err := server.Run(ctx, os.Getenv); err != nil {
+	err := server.Run(ctx, os.Getenv)
+	if err != nil {
 		fmt.Fprintf(os.Stderr, "error in serving: %v\n", err)
 		os.Exit(1)
 	}
