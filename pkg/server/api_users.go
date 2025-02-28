@@ -20,18 +20,18 @@ func (h CreateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var data RequestFormat
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "invalid request")
+		h.cfg.respondWithError(w, http.StatusBadRequest, "invalid request", err)
 		return
 	}
 
 	hashed, err := auth.HashPassword(data.Password)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 	err = auth.CheckPasswordHash(data.Password, hashed)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 
@@ -41,7 +41,7 @@ func (h CreateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	dbUser, err := h.cfg.Database.CreateUser(r.Context(), params)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 	user := User{

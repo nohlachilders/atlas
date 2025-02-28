@@ -60,6 +60,7 @@ func Run(
 			return err
 		case <-ctx.Done():
 			fmt.Println("Shutting down gracefully...")
+			server.Shutdown(ctx)
 			return nil
 		}
 	}

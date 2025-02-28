@@ -25,12 +25,15 @@ func healthReponseHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func respondWithError(w http.ResponseWriter, code int, msg string) {
+func (cfg *Config) respondWithError(w http.ResponseWriter, code int, msg string, err error) {
 	type errorStruct struct {
 		Error string `json:"error"`
 	}
 	thisError := errorStruct{
 		Error: msg,
+	}
+	if cfg.Platform == "dev" {
+		thisError.Error = thisError.Error + ": " + err.Error()
 	}
 	res, _ := json.Marshal(thisError)
 	w.Header().Set("Content-Type", "application/json")

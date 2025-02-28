@@ -41,20 +41,35 @@ func testingSendRequestWithJSON(ctx context.Context, endpoint string, requestTyp
 	return status, response, err
 }
 
+func testResetDatabase(t *testing.T, ctx context.Context, baseURL string) {
+	status, body, err := testingSendRequestWithJSON(ctx, baseURL+"/reset", "POST", "")
+	if err != nil {
+		t.Errorf("unexpected error: %s", err)
+	}
+	if status != "204 No Content" {
+		t.Errorf("something went wrong with the reset endpoint: wrong status %s, %s", status, body)
+	}
+}
+
+// Start a server instance using the current test case and a given context.
+// waits for the healthz enpoint to be ready before returning.
+// returns the base url used by the server and the context generated for it
 func testingStartDefault(t *testing.T, ctx context.Context) (string, context.Context) {
 	env := Env{
 		"ATLAS_PORT":     ":8080",
 		"ATLAS_DB_URL":   "postgresql://localhost:5432/atlas?sslmode=disable",
 		"ATLAS_PLATFORM": "dev",
 	}
+	getEnv := makeGetEnv(env)
+
 	ctx, cancel := context.WithCancel(ctx)
 	t.Cleanup(cancel)
-	baseURL := "http://localhost" + env["ATLAS_PORT"]
 
-	getEnv := makeGetEnv(env)
 	go Run(ctx, getEnv)
+
 	time.Sleep(10 * time.Millisecond)
 
+	baseURL := "http://localhost" + env["ATLAS_PORT"]
 	if err := testingAwaitServerStartup(ctx, baseURL+"/healthz", 5*time.Second); err != nil {
 		t.Errorf("error in awaiting server startup: %v", err)
 	}

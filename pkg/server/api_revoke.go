@@ -13,17 +13,17 @@ type RevokeHandler struct {
 func (h RevokeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := auth.GetBearerToken(r.Header)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 	refreshToken, err := h.cfg.Database.GetRefreshToken(r.Context(), tokenString)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 	err = h.cfg.Database.RevokeRefreshToken(r.Context(), refreshToken.Token)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 

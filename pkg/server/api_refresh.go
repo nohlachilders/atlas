@@ -14,34 +14,34 @@ type RefreshHandler struct {
 func (h RefreshHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := auth.GetBearerToken(r.Header)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 	refreshToken, err := h.cfg.Database.GetRefreshToken(r.Context(), tokenString)
 	if err != nil {
-		respondWithError(w, http.StatusUnauthorized, "authentication went wrong")
+		h.cfg.respondWithError(w, http.StatusUnauthorized, "authentication went wrong", err)
 		return
 	}
 
 	if refreshToken.ExpiresAt.Before(time.Now()) {
-		respondWithError(w, http.StatusUnauthorized, "Token is expired")
+		h.cfg.respondWithError(w, http.StatusUnauthorized, "Token is expired", err)
 		return
 	}
 	if refreshToken.RevokedAt.Valid {
-		respondWithError(w, http.StatusUnauthorized, "Token is revoked")
+		h.cfg.respondWithError(w, http.StatusUnauthorized, "Token is revoked", err)
 		return
 	}
 
 	user, err := h.cfg.Database.GetUserByID(r.Context(), refreshToken.UserID)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 
 	timeOneHour := time.Duration(1) * time.Hour
 	token, err := auth.MakeJWT(user.ID, h.cfg.Secret, timeOneHour)
 	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, "something went wrong")
+		h.cfg.respondWithError(w, http.StatusInternalServerError, "something went wrong", err)
 		return
 	}
 
