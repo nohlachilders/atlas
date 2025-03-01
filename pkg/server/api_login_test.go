@@ -37,9 +37,11 @@ func TestLogin(t *testing.T) {
 	}
 }
 
+// testingLogin is a helper function to test the login endpoint. returns the status,
+// and the body of the response.
 func testingLogin(t *testing.T, ctx context.Context, baseURL string, data any) (string, string) {
 	status, body, err := testingSendRequestWithJSON(ctx, baseURL+"/login", "POST", data)
-	t.Logf("%v,%v,%v", status, string(body), err)
+	//t.Logf("%v,%v,%v", status, string(body), err)
 	if err != nil {
 		t.Errorf("error in creation: %s", err.Error())
 	}

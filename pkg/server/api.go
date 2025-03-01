@@ -11,9 +11,31 @@ func (cfg *Config) makeRoutes(mux *http.ServeMux) {
 		ResetHandler{cfg: cfg},
 		[]AddMiddlewareFunc{
 			AddLoggingMiddleware,
-		}))
+		},
+		cfg))
 
 	mux.Handle("POST /users", CreateUserHandler{cfg: cfg})
+	mux.Handle("GET /users", ChainMiddlewares(
+		UserInfoHandler{cfg: cfg},
+		[]AddMiddlewareFunc{
+			AddAuthenticationMiddleware,
+		},
+		cfg,
+	))
+	mux.Handle("PUT /users", ChainMiddlewares(
+		UpdateUserInfoHandler{cfg: cfg},
+		[]AddMiddlewareFunc{
+			AddAuthenticationMiddleware,
+		},
+		cfg,
+	))
+	mux.Handle("DELETE /users", ChainMiddlewares(
+		DeleteUserHandler{cfg: cfg},
+		[]AddMiddlewareFunc{
+			AddAuthenticationMiddleware,
+		},
+		cfg,
+	))
 	mux.Handle("POST /login", LoginHandler{cfg: cfg})
 	mux.Handle("POST /refresh", RefreshHandler{cfg: cfg})
 	mux.Handle("POST /revoke", RevokeHandler{cfg: cfg})

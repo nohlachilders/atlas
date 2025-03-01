@@ -27,6 +27,8 @@ func MakeJWT(userID uuid.UUID, tokenSecret string, expiresIn time.Duration) (str
 	return signed, nil
 }
 
+// try to validate the given JWT against the given secret, and return a
+// UUID corresponding to the authorized user.
 func ValidateJWT(tokenString string, tokenSecret string) (uuid.UUID, error) {
 	parsedToken, err := jwt.ParseWithClaims(tokenString, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(tokenSecret), nil
@@ -41,18 +43,19 @@ func ValidateJWT(tokenString string, tokenSecret string) (uuid.UUID, error) {
 	return uuid.Parse(id)
 }
 
+// validate the Authorization header in a request and try to retrieve and return the contained token
 func GetBearerToken(headers http.Header) (string, error) {
 	_, exists := headers["Authorization"]
-	if exists != true {
-		return "", errors.New("No Authorization Header found")
+	if !exists {
+		return "", errors.New("no Authorization Header found")
 	}
 
 	authHeaderContents := strings.Split(headers.Get("Authorization"), " ")
 	if len(authHeaderContents) != 2 {
-		return "", errors.New("Malformed Authorization Header Contents")
+		return "", errors.New("malformed Authorization Header Contents")
 	}
 	if authHeaderContents[0] != "Bearer" {
-		return "", errors.New("Malformed Authorization Header Contents")
+		return "", errors.New("malformed Authorization Header Contents")
 	}
 
 	return authHeaderContents[1], nil
