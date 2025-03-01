@@ -11,7 +11,7 @@ type UserInfoHandler struct {
 }
 
 func (h UserInfoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	userID := r.Context().Value(UserIDKey).(uuid.UUID)
+	userID := r.Context().Value(UserIDContextKey).(uuid.UUID)
 
 	dbUser, err := h.cfg.Database.GetUserByID(r.Context(), userID)
 	if err != nil {

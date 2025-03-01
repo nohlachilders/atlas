@@ -36,7 +36,7 @@ func (h UpdateUserInfoHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 
 	params := database.UpdateUserInfoParams{
-		ID:             r.Context().Value(UserIDKey).(uuid.UUID),
+		ID:             r.Context().Value(UserIDContextKey).(uuid.UUID),
 		Email:          thisRequest.Email,
 		HashedPassword: hashed,
 	}

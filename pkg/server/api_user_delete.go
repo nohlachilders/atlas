@@ -11,7 +11,7 @@ type DeleteUserHandler struct {
 }
 
 func (h DeleteUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	err := h.cfg.Database.DeleteUser(r.Context(), r.Context().Value(UserIDKey).(uuid.UUID))
+	err := h.cfg.Database.DeleteUser(r.Context(), r.Context().Value(UserIDContextKey).(uuid.UUID))
 	if err != nil {
 		h.cfg.respondWithError(w, 500, "Something went wrong", err)
 		return

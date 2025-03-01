@@ -37,9 +37,9 @@ func (h *AuthenticationMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	ctx := context.WithValue(r.Context(), MiddlewareContextKey(UserIDKey), userID)
+	ctx := context.WithValue(r.Context(), MiddlewareContextKey(UserIDContextKey), userID)
 
 	h.next.ServeHTTP(w, r.WithContext(ctx))
 }
 
-var UserIDKey MiddlewareContextKey = "userID"
+var UserIDContextKey MiddlewareContextKey = "userID"
