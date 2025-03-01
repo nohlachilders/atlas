@@ -40,11 +40,15 @@ func Run(
 	cfg.Database = database.New(db)
 
 	cfg.Platform = getenv("ATLAS_PLATFORM")
+	cfg.Secret = getenv("ATLAS_SECRET")
+	if cfg.Secret == "" {
+		log.Fatalf("Must set ATLAS_SECRET")
+	}
 
 	mux := http.NewServeMux()
 	cfg.makeRoutes(mux)
 
-	handler := ChainMiddlewares(mux, []AddMiddlewareFunc{})
+	handler := ChainMiddlewares(mux, []AddMiddlewareFunc{}, &cfg)
 	server := http.Server{
 		Addr:        cfg.Port,
 		Handler:     handler,
